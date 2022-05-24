@@ -1,0 +1,145 @@
+#include<iostream>
+using namespace std;
+typedef struct TBTnode
+{
+ int lbit;
+ int rbit;
+ int data;
+ TBTnode *left,*right;
+}TBTnode;
+
+class tree
+{
+ public:
+   int n=0;
+   TBTnode* inseq[20];
+   TBTnode *create();
+   TBTnode *insert(TBTnode *T,int x);
+   void Inorder(TBTnode *T);
+   void inorder(TBTnode *T);
+   void threading(TBTnode *T);
+};
+
+TBTnode* tree::create()
+{
+ int n,x,i;
+ TBTnode *root;
+ root=NULL;
+ cout<<"\nEnter number of nodes"<<endl;
+ cin>>n;
+ for(i=0;i<n;i++)
+ {
+   cout<<"\nEnter value in node "<<(i+1)<<": ";
+   cin>>x;
+   root=insert(root,x);
+ }
+ return(root);
+}
+
+TBTnode* tree::insert(TBTnode *T,int x)
+{
+ TBTnode *p,*q,*r;
+ r=new TBTnode;
+ r->data=x;
+ r->left=r->right=NULL;
+ if(T==NULL)
+   return (r);
+ p=T;
+ while(p!=NULL)
+ {
+   q=p;
+   if(x>p->data)
+     p=p->right;
+   else
+     p=p->left;
+ }
+ if(x>q->data)
+   q->right=r;
+ else
+   q->left=r;
+  return(T);
+}
+
+void tree:: Inorder(TBTnode *T)
+{
+ if(T!=NULL)
+ {
+   Inorder(T->left);
+   cout<<T->data<<"\t";
+   Inorder(T->right);
+ }
+}
+
+void tree:: inorder(TBTnode *T)
+{
+ if(T!=NULL)
+ {
+  inorder(T->left);
+  cout<<T->data<<"\t";
+  inseq[n++]=T;
+  if(T->left==NULL)
+     T->lbit=0;
+  else
+     T->lbit=1;
+  if(T->right==NULL)
+    T->rbit=0;
+  else 
+    T->rbit=1;
+  inorder(T->right);
+ }
+}
+
+void tree::threading(TBTnode *T)
+{
+ int i;
+ TBTnode *root,*q;
+ root=new TBTnode;
+ root->data=00;
+ root->lbit=root->rbit=1;
+ root->left=T;
+ root->right=root;
+ q=inseq[0];
+ q->left=root;
+ cout<<"\nThread of left of "<<q->data<<" is="<<q->left->data<<endl;
+ if(q->rbit==0)
+ {
+   q->right=inseq[1];
+   cout<<"\nThread of right of "<<q->data<<" is="<<q->right->data<<endl;
+ }
+ q=inseq[n-1];
+ if(q->lbit==0)
+ {
+   q->left=inseq[n-2];
+   cout<<"\nThread of left of "<<q->data<<" is="<<q->left->data<<endl;
+ }
+ q->right=root;
+ cout<<"\nThread of right of "<<q->data<<" is="<<q->right->data<<endl;
+ for(i=1;i<(n-1);i++)
+ {
+  q=inseq[i];
+  if(q->lbit==0)
+  {
+    q->left=inseq[i-1];
+    cout<<"\nThread of left of "<<q->data<<" is="<<q->left->data<<endl;
+  }
+  if(q->rbit==0)
+  {
+    q->right=inseq[i+1];
+    cout<<"\nThread of right of "<<q->data<<" is="<<q->right->data<<endl;
+  }
+ }
+}
+
+int main()
+{
+ tree s;
+ TBTnode *h;
+ h=s.create();
+ cout<<"\nInorder traversal if BST"<<endl;
+ s.Inorder(h);
+ cout<<"\nInorder traversal of TBT"<<endl;
+ s.inorder(h);
+ cout<<"\nConversion to Threaded Binary Tree"<<endl;
+ s.threading(h);
+ return (0);
+}
